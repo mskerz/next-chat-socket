@@ -29,6 +29,6 @@ Server: https://github.com/mskerz/chat-server-ts
 ### 1. Clone this frontend repository
 
 ```bash
-git clone https://github.com/yourusername/nextjs-chat-client.git
+git clone https://github.com/mskerz/next-chat-socket
 cd nextjs-chat-client
 npm install
