@@ -8,16 +8,27 @@ function JoinCard() {
   const [username, setUsername] = useState("");
   const [roomName, setRoomName] = useState("");
   const navigate = useRouter();
-  const handleJoin = () => {
+
+  const handleJoin = async () => {
     if (username.trim() === "" || roomName.trim() === "") {
       alert("Please enter a username and room name");
       return;
     }
-    // Save the username and room name to local storage
-    // socket.emit("join-room", { roomName: roomName, username: username });
-    // Navigate to the chat page
-    navigate.push("/chat?username=" + username + "&roomName=" + roomName);
-  }
+
+    // เรียก API เพื่อเซ็ต session (cookie)
+    const res = await fetch("/api/set-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, roomName }),
+    });
+
+    if (!res.ok) {
+      alert("Failed to join room. Please try again.");
+      return;
+    }
+    // นำทางไปยังหน้า chat
+    navigate.push(`/chat`);
+  };
   return (
     <div className="flex flex-col justify gap-2  bg-white rounded-lg shadow-lg p-6 max-w-sm mx-auto">
       <div className="p-2">
@@ -42,7 +53,10 @@ function JoinCard() {
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
           />
-          <button onClick={handleJoin} className="bg-blue-600 hover:bg-blue-500 text-white mt-2 p-3 w-full rounded-2xl transition-all">
+          <button
+            onClick={handleJoin}
+            className="bg-blue-600 hover:bg-blue-500 text-white mt-2 p-3 w-full rounded-2xl transition-all"
+          >
             Join
           </button>
         </div>

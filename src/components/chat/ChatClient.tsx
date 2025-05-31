@@ -2,14 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { MdSend } from "react-icons/md";
+import type { ChatMessage } from "@/types/chat";
+import { SystemMessage, UserMessage } from "./message";
+import ProfileCircle from "./ProfileCircle";
 
 const SOCKET_HOST =
   process.env.NEXT_PUBLIC_SOCKET_HOST || "http://localhost:3001";
-
-type ChatMessage = {
-  username: string;
-  message: string;
-};
 
 export default function ChatClient({
   username,
@@ -21,7 +19,7 @@ export default function ChatClient({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const socketRef = useRef<Socket | null>(null);
-
+  const now = new Date();
   useEffect(() => {
     // สร้าง socket ครั้งเดียว
 
@@ -63,6 +61,13 @@ export default function ChatClient({
   };
   return (
     <div style={{ maxWidth: 500, margin: "2rem auto", padding: 16 }}>
+      <div className="bg-gray-100 flex items-center justify-start rounded-t-2xl   p-5 gap-2.5 ">
+        <ProfileCircle username="John" />
+        <div className="flex flex-col">
+           <p className="text-sm text-black">{username}</p>
+          <p className="text-sm text-black">{now.toUTCString()}</p>
+        </div>
+      </div>
       <div className="bg-gray-700  items-center justify-center text-center   px-3 py-3 ">
         <p className="text-sm text-white"> -{roomName}-</p>
       </div>
@@ -77,30 +82,14 @@ export default function ChatClient({
         {messages.map((msg, idx) => (
           <div key={idx} className="mb-2">
             {msg.username === "System" ? (
-              <div className="text-center">
-                <p className="text-sm text-white bg-gray-500/70 px-3 py-1 inline-block rounded-xl">
-                  {msg.message}
-                </p>
-              </div>
-            ) : msg.username === username ? (
-              <div className="flex justify-end items-center gap-2">
-                <p className="bg-blue-500 text-white px-3 py-1 rounded-xl max-w-[70%] break-words">
-                  {msg.message}
-                </p>
-                <span className="text-xs text-gray-400">{msg.username}</span>
-              </div>
+              <SystemMessage msg={msg} />
             ) : (
-              <div className="flex justify-start items-center gap-2">
-                <span className="text-xs text-gray-400">{msg.username}</span>
-                <p className="bg-green-500 text-white px-3 py-1 rounded-xl max-w-[70%] break-words">
-                  {msg.message}
-                </p>
-              </div>
+              <UserMessage msg={msg} username={username} />
             )}
           </div>
         ))}
       </div>
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className="flex items-center gap-2">
         <input
           value={input}
           className="outline-1 outline-gray-300 rounded-2xl px-3 py-1"

@@ -2,23 +2,14 @@
 import ChatClient from "@/components/chat/ChatClient";
 import { Metadata } from "next";
 import { metadata } from "../layout";
+import { getSessionRoomChat } from "@/libs/session";
 import type { MetaDataProps , PageProps } from "@/types/props";
 
 
  
 
-export async function generateMetadata({
-  searchParams,
-}: MetaDataProps): Promise<Metadata> {
-  const params = searchParams;
-  const username = Array.isArray(params.username)
-    ? params.username[0]
-    : params.username ?? "Anonymous";
-
-  const roomName = Array.isArray(params.roomName)
-    ? params.roomName[0]
-    : params.roomName ?? "default-room";
-
+export async function generateMetadata(): Promise<Metadata> {
+  const { roomName, username } = await getSessionRoomChat();
   return {
     ...metadata,
     title: `Chat Room - ${roomName}`,
@@ -28,18 +19,10 @@ export async function generateMetadata({
 
 
 
-export default async function ChatPage({
-  searchParams,
-}:  PageProps) {
-  const params = await searchParams;
-  const username = Array.isArray(params.username)
-    ? params.username[0]
-    : params.username ?? "Anonymous";
-
-  const roomName = Array.isArray(params.roomName)
-    ? params.roomName[0]
-    : params.roomName ?? "default-room";
-
+export default async function ChatPage() {
+  const { roomName, username } = await getSessionRoomChat();
+  console.log("ChatPage - roomName:", roomName, "username:", username);
+  
   return (
     <>
       <ChatClient username={username} roomName={roomName} />
