@@ -43,7 +43,7 @@ Server: https://github.com/mskerz/chat-server-ts
 
 
 
-## 🚧 Upcoming (v1.6.0)
+## 🚧 Upcoming (v1.3.0)
 
 - Typing indicator (e.g. "User is typing...")
 - Emoji support
